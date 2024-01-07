@@ -53,6 +53,13 @@ jobs:
       contents: read
 
     steps:
+      - name: Checkout Pulumi configs only
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            Pulumi.yaml
+            Pulumi.static.yaml
+          sparse-checkout-cone-mode: false
       - name: Get built pages
         id: get-artifact
         uses: actions/download-artifact@v4

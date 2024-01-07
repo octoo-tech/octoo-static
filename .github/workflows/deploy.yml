@@ -27,7 +27,7 @@ jobs:
           # this should match the `pages` option in your adapter-static options
           path: 'build/'
 
-  deploy:
+  deploy_github_pages:
     needs: build_site
     runs-on: ubuntu-latest
 
@@ -43,3 +43,34 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy_octoo_pro:
+    needs: build_site
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Get built pages
+        id: get-artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: build/
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::258408438468:role/github-actions
+          aws-region: us-west-2
+      - name: STS identity
+        run: |
+          aws sts get-caller-identity --output=text --no-cli-pager
+      - uses: pulumi/actions@v4
+        with:
+          command: up
+          stack-name: static
+          upsert: true
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

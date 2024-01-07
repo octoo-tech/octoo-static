@@ -1,0 +1,5 @@
+config:
+  aws:region: us-west-2
+  octoo-static:errorDocument: index.html
+  octoo-static:indexDocument: index.html
+  octoo-static:path: ./build

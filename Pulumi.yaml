@@ -70,7 +70,7 @@ resources:
             httpsPort: 443
             originProtocolPolicy: http-only
             originSslProtocols:
-              - TLSv1.3
+              - TLSv1.2
           domainName: ${bucket.websiteEndpoint}
           originId: ${bucket.arn}
       priceClass: PriceClass_100

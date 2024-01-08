@@ -5,4 +5,4 @@ config:
     - www.octoo.pro
   octoo-static:errorDocument: index.html
   octoo-static:indexDocument: index.html
-  octoo-static:path: ./build
+  octoo-static:path: ../build

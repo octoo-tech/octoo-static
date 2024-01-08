@@ -11,7 +11,7 @@ config:
     default: index.html
   path:
     type: string
-    default: ./build
+    default: ../build
   domain:
     type: String
 # Export the URLs and hostnames of the bucket and distribution.

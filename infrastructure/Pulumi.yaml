@@ -12,6 +12,8 @@ config:
   path:
     type: string
     default: ./build
+  domain:
+    type: String
 # Export the URLs and hostnames of the bucket and distribution.
 outputs:
   cdnHostname: ${cdn.domainName}
@@ -19,6 +21,61 @@ outputs:
   originHostname: ${bucket.websiteEndpoint}
   originURL: http://${bucket.websiteEndpoint}
 resources:
+  zone:
+    type: aws:route53/zone:Zone
+    properties:
+      name: ${domain}.
+  # Create a DNS A record to point to the CDN.
+  ${domain}:
+    type: aws:route53:Record
+    properties:
+      name: ${domain}
+      zoneId: ${zone.zoneId}
+      type: A
+      aliases:
+        - name: ${cdn.domainName}
+          zoneId: ${cdn.hostedZoneId}
+          evaluateTargetHealth: true
+    options:
+      dependsOn:
+        - ${certificate}
+  www.${domain}:
+    type: aws:route53:Record
+    properties:
+      name: www.${domain}
+      zoneId: ${zone.zoneId}
+      type: CNAME
+      records:
+        - ${domain}.
+    options:
+      dependsOn:
+        - ${certificate}
+
+  us-east-provider: # ACM certificates must be created in the us-east-1 region.
+    type: pulumi:providers:aws
+    properties:
+      region: us-east-1
+  certificate:
+    type: aws:acm:Certificate
+    properties:
+      domainName: ${domain}
+      validationMethod: DNS
+    options:
+      # ACM certificates must be created in the us-east-1 region
+      provider: ${us-east-provider}
+    subjectAlternativeNames:
+      - www.${domain}
+  # Validate the ACM certificate with DNS.
+  certificateValidation:
+    type: aws:route53:Record
+    properties:
+      name: ${certificate.domainValidationOptions[0].resourceRecordName}
+      type: ${certificate.domainValidationOptions[0].resourceRecordType}
+      zoneId: ${zone.zoneId}
+      ttl: 60
+      records:
+        - ${certificate.domainValidationOptions[0].resourceRecordValue}
+
   # Create an S3 bucket and configure it as a website.
   bucket:
     properties:
@@ -77,8 +134,13 @@ resources:
       restrictions:
         geoRestriction:
           restrictionType: none
+      aliases:
+        - ${domain}
+        - www.${domain}
       viewerCertificate:
         cloudfrontDefaultCertificate: true
+        acmCertificateArn: ${certificate.arn}
+        sslSupportMethod: sni-only
     type: aws:cloudfront:Distribution
   # Assign ownership controls to the new S3 bucket
   ownership-controls:

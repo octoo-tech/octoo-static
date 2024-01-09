@@ -84,6 +84,6 @@ jobs:
           work-dir: infrastructure/
           command: up
           stack-name: dev
-          upsert: true
+          # upsert: true
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

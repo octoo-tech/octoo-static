@@ -136,7 +136,7 @@ resources:
           restrictionType: none
       aliases:
         - ${domain}
-        - www.${domain}
+        # - www.${domain}
       viewerCertificate:
         cloudfrontDefaultCertificate: true
         acmCertificateArn: ${certificate.arn}

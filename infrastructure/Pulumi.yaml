@@ -28,5 +28,4 @@ resources:
       sitePath: ${path}
       withCDN: true
       targetDomain: ${domain}
-      withLogs: true,
       cacheTTL: 3600

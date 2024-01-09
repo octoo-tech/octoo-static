@@ -147,6 +147,9 @@ resources:
         acmCertificateArn: ${certificate.arn}
         sslSupportMethod: sni-only
     type: aws:cloudfront:Distribution
+    options:
+      dependsOn:
+        - ${certCertificateValidation}
   # Assign ownership controls to the new S3 bucket
   ownership-controls:
     properties:

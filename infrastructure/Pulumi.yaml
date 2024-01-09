@@ -66,7 +66,7 @@ resources:
       # ACM certificates must be created in the us-east-1 region
       provider: ${us-east-provider}
   # Validate the ACM certificate with DNS.
-  certificateValidation:
+  certValidation:
     type: aws:route53:Record
     properties:
       name: ${certificate.domainValidationOptions[0].resourceRecordName}
@@ -75,7 +75,11 @@ resources:
       ttl: 60
       records:
         - ${certificate.domainValidationOptions[0].resourceRecordValue}
-
+  certCertificateValidation:
+    type: aws.acm.CertificateValidation
+    properties:
+      certificateArn: ${certificate.arn}
+      validationRecordFqdns: [${certValidation.fqdn}]
   # Create an S3 bucket and configure it as a website.
   bucket:
     properties:

@@ -143,7 +143,7 @@ resources:
         - ${domain}
         # - www.${domain}
       viewerCertificate:
-        cloudfrontDefaultCertificate: true
+        cloudfrontDefaultCertificate: false
         acmCertificateArn: ${certificate.arn}
         sslSupportMethod: sni-only
     type: aws:cloudfront:Distribution

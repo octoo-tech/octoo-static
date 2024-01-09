@@ -53,14 +53,19 @@ resources:
   #     dependsOn:
   #       - ${certificate}
 
+  us-east-provider: # ACM certificates must be created in the us-east-1 region for CDN
+    type: pulumi:providers:aws
+    properties:
+      region: us-east-1
   certificate:
     type: aws:acm:Certificate
     properties:
       domainName: ${domain}
       validationMethod: DNS
-      keyAlgorithm: EC_secp384r1
       # subjectAlternativeNames:
       #   - www.${domain}
+    options:
+      provider: ${us-east-provider}
   # Validate the ACM certificate with DNS.
   certValidation:
     type: aws:route53:Record
@@ -77,6 +82,8 @@ resources:
       certificateArn: ${certificate.arn}
       validationRecordFqdns:
         - ${certValidation.fqdn}
+    options:
+      provider: ${us-east-provider}
   # Create an S3 bucket and configure it as a website.
   bucket:
     properties:

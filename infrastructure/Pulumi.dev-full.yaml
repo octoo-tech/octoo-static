@@ -63,7 +63,6 @@ resources:
       # subjectAlternativeNames:
       #   - www.${domain}
     options:
-      # ACM certificates must be created in the us-east-1 region
       provider: ${us-east-provider}
   # Validate the ACM certificate with DNS.
   certValidation:
@@ -81,6 +80,9 @@ resources:
       certificateArn: ${certificate.arn}
       validationRecordFqdns:
         - ${certValidation.fqdn}
+        options
+    options:
+      provider: ${us-east-provider}
   # Create an S3 bucket and configure it as a website.
   bucket:
     properties:

@@ -60,11 +60,11 @@ resources:
     properties:
       domainName: ${domain}
       validationMethod: DNS
+      subjectAlternativeNames:
+        - www.${domain}
     options:
       # ACM certificates must be created in the us-east-1 region
       provider: ${us-east-provider}
-    subjectAlternativeNames:
-      - www.${domain}
   # Validate the ACM certificate with DNS.
   certificateValidation:
     type: aws:route53:Record

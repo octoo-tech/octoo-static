@@ -13,7 +13,7 @@ config:
     type: string
     default: ../build
   domain:
-    type: String
+    type: string
 # Export the URLs and hostnames of the bucket and distribution.
 outputs:
   cdnHostname: ${cdn.domainName}

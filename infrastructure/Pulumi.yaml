@@ -14,6 +14,12 @@ config:
     default: ../build
   domain:
     type: string
+variables:
+  zone:
+    Fn::Invoke:
+      Function: aws:route53:getZone
+      Arguments:
+        name: ${domain}
 # Export the URLs and hostnames of the bucket and distribution.
 outputs:
   cdnHostname: ${cdn.domainName}
@@ -21,10 +27,6 @@ outputs:
   originHostname: ${bucket.websiteEndpoint}
   originURL: http://${bucket.websiteEndpoint}
 resources:
-  zone:
-    type: aws:route53/zone:Zone
-    properties:
-      name: ${domain}.
   # Create a DNS A record to point to the CDN.
   ${domain}:
     type: aws:route53:Record
@@ -51,19 +53,14 @@ resources:
   #     dependsOn:
   #       - ${certificate}
 
-  us-east-provider: # ACM certificates must be created in the us-east-1 region.
-    type: pulumi:providers:aws
-    properties:
-      region: us-east-1
   certificate:
     type: aws:acm:Certificate
     properties:
       domainName: ${domain}
       validationMethod: DNS
+      keyAlgorithm: EC_secp384r1
       # subjectAlternativeNames:
       #   - www.${domain}
-    options:
-      provider: ${us-east-provider}
   # Validate the ACM certificate with DNS.
   certValidation:
     type: aws:route53:Record
@@ -80,8 +77,6 @@ resources:
       certificateArn: ${certificate.arn}
       validationRecordFqdns:
         - ${certValidation.fqdn}
-    options:
-      provider: ${us-east-provider}
   # Create an S3 bucket and configure it as a website.
   bucket:
     properties:

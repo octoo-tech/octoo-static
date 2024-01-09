@@ -79,7 +79,8 @@ resources:
     type: aws.acm.CertificateValidation
     properties:
       certificateArn: ${certificate.arn}
-      validationRecordFqdns: [${certValidation.fqdn}]
+      validationRecordFqdns:
+        - ${certValidation.fqdn}
   # Create an S3 bucket and configure it as a website.
   bucket:
     properties:

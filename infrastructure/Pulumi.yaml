@@ -22,10 +22,12 @@ variables:
         name: ${domain}
 # Export the URLs and hostnames of the bucket and distribution.
 outputs:
-  cdnHostname: ${cdn.domainName}
-  cdnURL: https://${cdn.domainName}
-  originHostname: ${bucket.websiteEndpoint}
-  originURL: http://${bucket.websiteEndpoint}
+  cdn-hostname: ${cdn.domainName}
+  cdn-url: https://${cdn.domainName}
+  origin-hostname: ${bucket.websiteEndpoint}
+  origin-url: http://${bucket.websiteEndpoint}
+  url: https://${domain}
+  www-url: https://www.${domain}
 resources:
   # Create a DNS A record to point to the CDN.
   ${domain}:
@@ -64,7 +66,7 @@ resources:
     properties:
       domainName: ${domain}
       validationMethod: DNS
-      keyAlgorithm: RSA_2048 # EC_secp384r1
+      keyAlgorithm: EC_prime256v1
       subjectAlternativeNames:
         - www.${domain}
     options:

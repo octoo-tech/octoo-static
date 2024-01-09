@@ -16,9 +16,9 @@ config:
     type: string
 variables:
   zone:
-    Fn::Invoke:
-      Function: aws:route53:getZone
-      Arguments:
+    fn::invoke:
+      function: aws:route53:getZone
+      arguments:
         name: ${domain}
 # Export the URLs and hostnames of the bucket and distribution.
 outputs:
@@ -41,17 +41,17 @@ resources:
     options:
       dependsOn:
         - ${certificate}
-  # www.${domain}:
-  #   type: aws:route53:Record
-  #   properties:
-  #     name: www.${domain}
-  #     zoneId: ${zone.zoneId}
-  #     type: CNAME
-  #     records:
-  #       - ${domain}.
-  #   options:
-  #     dependsOn:
-  #       - ${certificate}
+  www.${domain}:
+    type: aws:route53:Record
+    properties:
+      name: www.${domain}
+      zoneId: ${zone.zoneId}
+      type: CNAME
+      records:
+        - ${domain}.
+    options:
+      dependsOn:
+        - ${certificate}
 
   us-east-provider: # ACM certificates must be created in the us-east-1 region for CDN
     type: pulumi:providers:aws
@@ -62,12 +62,13 @@ resources:
     properties:
       domainName: ${domain}
       validationMethod: DNS
-      # subjectAlternativeNames:
-      #   - www.${domain}
+      keyAlgorithm: EC_secp384r1
+      subjectAlternativeNames:
+        - www.${domain}
     options:
       provider: ${us-east-provider}
   # Validate the ACM certificate with DNS.
-  certValidation:
+  certValidation-root:
     type: aws:route53:Record
     properties:
       name: ${certificate.domainValidationOptions[0].resourceRecordName}
@@ -76,12 +77,22 @@ resources:
       ttl: 60
       records:
         - ${certificate.domainValidationOptions[0].resourceRecordValue}
+  certValidation-www:
+    type: aws:route53:Record
+    properties:
+      name: ${certificate.domainValidationOptions[1].resourceRecordName}
+      type: ${certificate.domainValidationOptions[1].resourceRecordType}
+      zoneId: ${zone.zoneId}
+      ttl: 60
+      records:
+        - ${certificate.domainValidationOptions[1].resourceRecordValue}
   certCertificateValidation:
     type: aws:acm:CertificateValidation
     properties:
       certificateArn: ${certificate.arn}
       validationRecordFqdns:
-        - ${certValidation.fqdn}
+        - ${certValidation-root.fqdn}
+        - ${certValidation-www.fqdn}
     options:
       provider: ${us-east-provider}
   # Create an S3 bucket and configure it as a website.
@@ -144,7 +155,7 @@ resources:
           restrictionType: none
       aliases:
         - ${domain}
-        # - www.${domain}
+        - www.${domain}
       viewerCertificate:
         cloudfrontDefaultCertificate: false
         acmCertificateArn: ${certificate.arn}

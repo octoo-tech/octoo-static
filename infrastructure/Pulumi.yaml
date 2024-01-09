@@ -81,6 +81,9 @@ resources:
       ttl: 60
       records:
         - ${certificate.domainValidationOptions[0].resourceRecordValue}
+    options:
+      dependsOn:
+        - ${certificate}
   certValidation-www:
     type: aws:route53:Record
     properties:
@@ -90,6 +93,9 @@ resources:
       ttl: 60
       records:
         - ${certificate.domainValidationOptions[1].resourceRecordValue}
+    options:
+      dependsOn:
+        - ${certificate}
   certCertificateValidation:
     type: aws:acm:CertificateValidation
     properties:

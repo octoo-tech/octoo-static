@@ -45,10 +45,11 @@ resources:
     type: aws:route53:Record
     properties:
       name: www.${domain}
-      zoneId: ${zone.zoneId}
-      type: CNAME
-      records:
-        - ${domain}.
+      type: A
+      aliases:
+        - name: ${cdn.domainName}
+          zoneId: ${cdn.hostedZoneId}
+          evaluateTargetHealth: true
     options:
       dependsOn:
         - ${certificate}

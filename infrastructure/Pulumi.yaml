@@ -45,6 +45,7 @@ resources:
     type: aws:route53:Record
     properties:
       name: www.${domain}
+      zoneId: ${zone.zoneId}
       type: A
       aliases:
         - name: ${cdn.domainName}

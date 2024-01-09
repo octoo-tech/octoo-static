@@ -2,7 +2,7 @@ name: octoo-static
 runtime: yaml
 description: OCTOO Svelte Skeleton Static AWS deployment
 # Import the program's configuration settings.
-configuration:
+config:
   errorDocument:
     type: string
     default: error.html
@@ -39,17 +39,17 @@ resources:
     options:
       dependsOn:
         - ${certificate}
-  www.${domain}:
-    type: aws:route53:Record
-    properties:
-      name: www.${domain}
-      zoneId: ${zone.zoneId}
-      type: CNAME
-      records:
-        - ${domain}.
-    options:
-      dependsOn:
-        - ${certificate}
+  # www.${domain}:
+  #   type: aws:route53:Record
+  #   properties:
+  #     name: www.${domain}
+  #     zoneId: ${zone.zoneId}
+  #     type: CNAME
+  #     records:
+  #       - ${domain}.
+  #   options:
+  #     dependsOn:
+  #       - ${certificate}
 
   us-east-provider: # ACM certificates must be created in the us-east-1 region.
     type: pulumi:providers:aws
@@ -60,8 +60,8 @@ resources:
     properties:
       domainName: ${domain}
       validationMethod: DNS
-      subjectAlternativeNames:
-        - www.${domain}
+      # subjectAlternativeNames:
+      #   - www.${domain}
     options:
       # ACM certificates must be created in the us-east-1 region
       provider: ${us-east-provider}

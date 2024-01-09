@@ -2,7 +2,7 @@ name: octoo-static
 runtime: yaml
 description: OCTOO Svelte Skeleton Static AWS deployment
 # Import the program's configuration settings.
-config:
+configuration:
   errorDocument:
     type: string
     default: error.html

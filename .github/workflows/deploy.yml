@@ -82,8 +82,7 @@ jobs:
       - uses: pulumi/actions@v4
         with:
           work-dir: infrastructure/
-          command: up
-          stack-name: dev
-          upsert: true
+          command: destroy
+          stack-name: static
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

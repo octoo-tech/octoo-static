@@ -76,7 +76,7 @@ resources:
       records:
         - ${certificate.domainValidationOptions[0].resourceRecordValue}
   certCertificateValidation:
-    type: aws.acm.CertificateValidation
+    type: aws:acm:CertificateValidation
     properties:
       certificateArn: ${certificate.arn}
       validationRecordFqdns:

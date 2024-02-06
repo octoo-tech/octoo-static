@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: lts/*
           cache: npm
       - run: npm install
 
@@ -57,17 +57,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
-            infrastructure/
+            infra/
           sparse-checkout-cone-mode: false
       - name: Setup Node LTS ✨
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: yarn
+          cache: npm
       - name: Installing dependencies
         run: |
-          cd infrastructure/
-          yarn install
+          cd infra/
+          npm install
       - name: Get built pages
         id: get-artifact
         uses: actions/download-artifact@v4
@@ -90,7 +90,7 @@ jobs:
       #     aws sts get-caller-identity --output=text --no-cli-pager
       - uses: pulumi/actions@v5
         with:
-          work-dir: infrastructure/
+          work-dir: infra/
           command: up
           stack-name: octoo/dev
           upsert: true

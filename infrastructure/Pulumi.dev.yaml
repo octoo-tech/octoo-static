@@ -4,3 +4,5 @@ config:
   octoo-static:errorDocument: index.html
   octoo-static:indexDocument: index.html
   octoo-static:path: ../build
+environment:
+  - dev

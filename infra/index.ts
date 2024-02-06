@@ -12,6 +12,10 @@ const errorDocument = config.get("errorDocument") || "error.html";
 // Look up your existing Route 53 hosted zone.
 const zone = aws.route53.getZoneOutput({ name: domain });
 
+// ACM certificates MUST be created in the us-east-1 region
+const usEastProvider = new aws.Provider("us-east-provider", {
+    region: "us-east-1",
+});
 // Provision a new ACM certificate.
 const certificate = new aws.acm.Certificate("certificate",
     {
@@ -20,23 +24,26 @@ const certificate = new aws.acm.Certificate("certificate",
         keyAlgorithm: 'EC_prime256v1',
         subjectAlternativeNames: ['www.' + domain]
     },
-    {
-        // ACM certificates must be created in the us-east-1 region.
-        provider: new aws.Provider("us-east-provider", {
-            region: "us-east-1",
-        }),
-    },
+    { provider: usEastProvider },
 );
 
-const certificateValidationAction = new aws.acm.CertificateValidation("certificate-validation", {
+const certificateValidation = new aws.acm.CertificateValidation("certificate-validation", {
     // The ARN of the certificate we're validating
     certificateArn: certificate.arn,
     // The FQDNs from the DNS validation option of the certificate
     validationRecordFqdns: certificate.domainValidationOptions.apply(
         // Map over the domain validation options to get the record FQDNs
-        (options) => options.map((option) => option.resourceRecordName!)
+        (options) => options.map((option) =>
+            new aws.route53.Record("certificate-validation-record-" + option.domainName, {
+                name: option.resourceRecordName,
+                records: [option.resourceRecordValue],
+                ttl: 60,
+                type: option.resourceRecordType,
+                zoneId: zone.zoneId,
+            }).fqdn
+        )
     ),
-});
+}, { provider: usEastProvider });
 
 // Create an S3 bucket and configure it as a website.
 const bucket = new aws.s3.Bucket("bucket", {
@@ -121,7 +128,7 @@ const cdn = new aws.cloudfront.Distribution("cdn", {
         acmCertificateArn: certificate.arn,
         sslSupportMethod: "sni-only",
     },
-}, { dependsOn: [certificateValidationAction] });
+}, { dependsOn: [certificateValidation] });
 
 
 // route53 records

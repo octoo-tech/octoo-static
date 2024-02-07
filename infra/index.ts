@@ -145,7 +145,7 @@ const cdn = new aws.cloudfront.Distribution("cdn", {
                     evaluateTargetHealth: true,
                 }
             ],
-        }, { dependsOn: certificate });
+        });
     });
 
 

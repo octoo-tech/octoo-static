@@ -86,11 +86,21 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::077818651371:role/octoo-github-actions-octoo-static
           aws-region: us-west-2
-      - uses: pulumi/actions@v5
+      - name: Deploy PRO stack
+        uses: pulumi/actions@v5
         with:
           work-dir: infra/
           command: up
           stack-name: pro
+          upsert: true
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+      - name: Deploy US stack
+        uses: pulumi/actions@v5
+        with:
+          work-dir: infra/
+          command: up
+          stack-name: us
           upsert: true
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

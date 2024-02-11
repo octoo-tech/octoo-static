@@ -1,6 +1,6 @@
 config:
   aws:region: us-west-2
-  domain: octoo.pro
+  domain: octoo.us
   octoo-static:errorDocument: index.html
   octoo-static:indexDocument: index.html
   octoo-static:path: ../build

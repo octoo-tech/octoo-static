@@ -44,7 +44,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  deploy_octoo_pro:
+  deploy_octoo_pro_and_us:
     needs: build_site
     runs-on: ubuntu-latest
 

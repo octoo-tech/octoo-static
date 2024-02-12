@@ -31,7 +31,7 @@
 	<!-- Page Route Content -->
 	<svelte:fragment slot="footer">
     <div class="space-y-10 text-center flex flex-col items-center">
-      <p class="code">&copy; OCTOO, 2023</p>
+      <p class="code">&copy; OCTOO, 2024</p>
     </div>
 	</svelte:fragment>
 	<slot />

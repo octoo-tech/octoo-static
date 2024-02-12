@@ -6,6 +6,9 @@ on:
 
 jobs:
   deploy:
+    permissions:
+      id-token: write
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,7 +20,7 @@ jobs:
         run: |
           npm install
           cd infra/ && npm install
-      - name: Build
+      - name: uild
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
         run: |

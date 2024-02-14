@@ -20,7 +20,7 @@ jobs:
         run: |
           npm install
           cd infra/ && npm install
-      - name: uild
+      - name: Build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
         run: |

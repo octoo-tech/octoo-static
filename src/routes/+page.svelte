@@ -25,7 +25,7 @@
   </div>
   <div class="space-y-10 text-left flex flex-col items-center px-4">
     <div class="space-y-2">
-      <h1 class="h1">What is Octoo?</h1>
+      <h1 class="h1 playfair-display">What is Octoo?</h1>
       <p>Octoo is a revolutionary, specialized search engine and comprehensive suite of communication tools exclusively for interior design professionals to source and purchase products from to the trade showrooms and manufacturers.</p>
       <p>Streamlined searching across multiple showrooms and manufacturers enables design professionals to abandon the current tedious search for products: showroom by showroom or manufacturer by manufacturer.
         Octoo displays search results in one consolidated website and includes products only from to the trade showrooms and manufacturers including custom furnishings, case goods, and lighting.</p>

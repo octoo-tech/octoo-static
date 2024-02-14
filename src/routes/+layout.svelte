@@ -14,7 +14,9 @@
 		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">OCTOO</strong>
+				<strong class="text-xl uppercase">
+					<enhanced:img src="/static/octo-o.png" alt="OCTOO" class="octoo-header" />
+				</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<a

@@ -9,6 +9,7 @@
 	export let parent: SvelteComponent;
 
 	const modalStore = getModalStore();
+    let submitting = false;
 
 	// Form Data
 	const formData = {
@@ -23,7 +24,7 @@
 		console.log(formData);
 
 		try {
-			var submitting = true;
+			submitting = true;
 			await fetch(FORMSPARK_ACTION_URL, {
 				method: 'POST',
 				headers: {
@@ -78,7 +79,7 @@
 		<!-- prettier-ignore -->
 		<footer class="modal-footer {parent.regionFooter}">
 			<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
-			<button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Submit</button>
+			<button class="btn {parent.buttonPositive}" on:click={onFormSubmit} disabled="{submitting}">Submit</button>
 		</footer>
 	</div>
 {/if}

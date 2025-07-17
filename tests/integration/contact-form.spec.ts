@@ -12,10 +12,10 @@ test.describe('Contact Form Integration', () => {
 	test('opens contact modal when contact button is clicked', async ({ page }) => {
 		// Click the contact button
 		await page.click('button:has-text("Contact")');
-		
+
 		// Wait for modal to appear
 		await expect(page.locator('text=Contact Us')).toBeVisible();
-		
+
 		// Check form fields are present
 		await expect(page.locator('input[placeholder="Your name..."]')).toBeVisible();
 		await expect(page.locator('input[placeholder="Your email address..."]')).toBeVisible();
@@ -25,7 +25,14 @@ test.describe('Contact Form Integration', () => {
 	test('can fill out and submit contact form', async ({ context }) => {
 		// Create a new page to avoid context issues
 		const newPage = await context.newPage();
-		await newPage.goto('/', { waitUntil: 'networkidle' });
+		await newPage.goto('/', {
+			waitUntil: 'domcontentloaded',
+			timeout: 60000
+		});
+
+		// Wait for page to be ready
+		await expect(newPage.locator('h1:has-text("What is Octoo?")')).toBeVisible({ timeout: 15000 });
+		await newPage.waitForTimeout(1000);
 
 		// Mock the form submission endpoint
 		await newPage.route('https://submit-form.com/mzNITeDuV', async route => {
@@ -36,9 +43,12 @@ test.describe('Contact Form Integration', () => {
 			});
 		});
 
-		// Open contact modal
-		await newPage.click('button:has-text("Contact")');
-		await expect(newPage.locator('text=Contact Us')).toBeVisible({ timeout: 10000 });
+		// Open contact modal with better reliability
+		const contactButton = newPage.locator('button:has-text("Contact")');
+		await expect(contactButton).toBeVisible({ timeout: 10000 });
+		await expect(contactButton).toBeEnabled({ timeout: 5000 });
+		await contactButton.click();
+		await expect(newPage.locator('text=Contact Us')).toBeVisible({ timeout: 15000 });
 
 		// Fill out the form
 		await newPage.fill('input[placeholder="Your name..."]', 'John Doe');

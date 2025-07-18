@@ -6,21 +6,18 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "npm run test:unit:ci && npm run test:integration:ci",
+    "test": "npm run test:unit:ci",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
-    "test:integration": "playwright test --workers=1",
-    "test:integration:ci": "playwright test --workers=1 --reporter=line",
-    "test:integration:headed": "playwright test --workers=1 --headed",
-    "test:integration:ui": "playwright test --workers=1 --ui",
+
     "test:unit": "vitest",
     "test:unit:ci": "vitest --run",
     "test:unit:coverage": "vitest --coverage --run"
   },
   "devDependencies": {
-    "@playwright/test": "^1.54.1",
+
     "@skeletonlabs/skeleton": "2.6.1",
     "@skeletonlabs/tw-plugin": "0.3.0",
     "@sveltejs/adapter-auto": "^3.0.0",

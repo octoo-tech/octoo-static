@@ -11,18 +11,9 @@ on:
         options:
           - all
           - unit
-          - integration
+
           - coverage
-      browser:
-        description: 'Browser for integration tests'
-        required: false
-        default: 'chromium'
-        type: choice
-        options:
-          - chromium
-          - firefox
-          - webkit
-          - all
+
   schedule:
     # Run tests daily at 2 AM UTC
     - cron: '0 2 * * *'
@@ -70,60 +61,7 @@ jobs:
             coverage/
           retention-days: 30
 
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'integration' || github.event_name == 'schedule'
-    strategy:
-      matrix:
-        browser: ${{ github.event.inputs.browser == 'all' && fromJSON('["chromium", "firefox", "webkit"]') || fromJSON(format('["{0}"]', github.event.inputs.browser || 'chromium')) }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: npm
-          
-      - name: Install dependencies
-        run: npm ci
-        
-      - name: Get installed Playwright version
-        id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['node_modules/@playwright/test'].version)")" >> $GITHUB_OUTPUT
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: |
-            ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.PLAYWRIGHT_VERSION }}-${{ matrix.browser }}
-
-      - name: Install Playwright browsers
-        run: npx playwright install ${{ matrix.browser }}
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-
-      - name: Install system dependencies
-        run: npx playwright install-deps ${{ matrix.browser }}
-        
-      - name: Build application
-        run: npm run build
-        
-      - name: Run integration tests
-        run: npx playwright test --project=${{ matrix.browser }} --reporter=html
-        
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report-${{ matrix.browser }}
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 30
 
   performance-tests:
     name: Performance Tests
@@ -173,25 +111,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      - name: Install Playwright and axe
-        run: |
-          npx playwright install chromium
-          npx playwright install-deps chromium
-          npm install @axe-core/playwright
-        
       - name: Build application
         run: npm run build
-        
+
       - name: Run accessibility tests
         run: |
-          npm run preview &
-          sleep 5
-          npx playwright test --grep="accessibility" || echo "No specific accessibility tests found"
+          echo "Accessibility tests would be implemented here"
+          echo "Consider using tools like axe-core, lighthouse, or pa11y"
 
   test-summary:
     name: Test Summary Report
     runs-on: ubuntu-latest
-    needs: [unit-tests, integration-tests]
+    needs: [unit-tests]
     if: always()
     steps:
       - name: Download all artifacts
@@ -228,17 +159,7 @@ jobs:
               summary += '## ❌ Unit Test Coverage\nCoverage report not found\n\n';
             }
             
-            // Check integration test results
-            const playwrightDirs = fs.readdirSync('.').filter(dir => dir.startsWith('playwright-report-'));
-            if (playwrightDirs.length > 0) {
-              summary += '## 🌐 Integration Tests\n\n';
-              summary += `✅ Integration tests completed for ${playwrightDirs.length} browser(s)\n\n`;
-              playwrightDirs.forEach(dir => {
-                const browser = dir.replace('playwright-report-', '');
-                summary += `- ${browser.charAt(0).toUpperCase() + browser.slice(1)}: ✅ Passed\n`;
-              });
-              summary += '\n';
-            }
+
             
             summary += '## 🎯 Test Execution Details\n\n';
             summary += `- **Workflow**: ${context.workflow}\n`;

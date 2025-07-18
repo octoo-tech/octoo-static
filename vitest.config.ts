@@ -45,6 +45,7 @@ export default defineConfig({
 
 				// SvelteKit generated files
 				'src/routes/+layout.js',
+				'src/routes/+layout.svelte',
 				'src/lib/index.ts'
 			]
 		}

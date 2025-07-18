@@ -20,7 +20,7 @@
     "test:unit:coverage": "vitest --coverage --run"
   },
   "devDependencies": {
-    "@playwright/test": "^1.28.1",
+    "@playwright/test": "^1.54.1",
     "@skeletonlabs/skeleton": "2.6.1",
     "@skeletonlabs/tw-plugin": "0.3.0",
     "@sveltejs/adapter-auto": "^3.0.0",

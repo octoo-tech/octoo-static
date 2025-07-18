@@ -20,7 +20,7 @@
 
 	// We've created a custom submit function to pass the response and close the modal.
 	const FORMSPARK_ACTION_URL = 'https://submit-form.com/mzNITeDuV';
-	async function onFormSubmit(): void {
+	async function onFormSubmit(): Promise<void> {
 		console.log(formData);
 
 		try {
@@ -73,7 +73,7 @@
 					rows="4"
 					bind:value={formData.text}
 					placeholder="Please, enter your message here..."
-				/>
+				></textarea>
 			</label>
 		</form>
 		<!-- prettier-ignore -->

@@ -90,23 +90,9 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-  deploy-us-approval:
-    name: Approve US Deployment
-    needs: deploy-pro
-    runs-on: ubuntu-latest
-    environment:
-      name: us-deployment
-      url: https://github.com/${{ github.repository }}/deployments
-    steps:
-      - name: Manual approval required
-        run: |
-          echo "🚀 PRO stack deployed successfully!"
-          echo "⏳ Waiting for manual approval to deploy US stack..."
-          echo "📋 Please review the PRO deployment before approving US deployment."
-
   deploy-us:
     name: Deploy US Stack
-    needs: deploy-us-approval
+    needs: deploy-pro
     permissions:
       id-token: write
       contents: read
